@@ -1,0 +1,87 @@
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: flexcar
+      POSTGRES_PASSWORD: flexcar_dev_password
+      POSTGRES_DB: flexcar_demo_development
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flexcar -d flexcar_demo_development"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Rails Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      additional_contexts:
+        flexcar_promotions_source: ../flexcar_promotions
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+      - rails_tmp:/rails/tmp
+      - rails_log:/rails/log
+      - ../flexcar_promotions:/flexcar_promotions
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://flexcar:flexcar_dev_password@db:5432/flexcar_demo_development
+      POSTGRES_USER: flexcar
+      POSTGRES_PASSWORD: flexcar_dev_password
+      POSTGRES_DB: flexcar_demo_development
+      RAILS_ENV: development
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
+  # Redis for caching and background jobs
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    command: npm run dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3001:3001"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3000/api/v1
+      NODE_ENV: development
+    depends_on:
+      - backend
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
+  redis_data:
+  bundle_cache:
+  rails_tmp:
+  rails_log:

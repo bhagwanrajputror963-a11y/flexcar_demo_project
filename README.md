@@ -32,6 +32,11 @@ This demo application integrates the `flexcar_promotions` engine to provide a co
 
 ## Prerequisites
 
+### Option 1: Docker (Recommended - No Local Setup Needed)
+- **Docker** 20.10 or higher
+- **Docker Compose** 2.0 or higher
+
+### Option 2: Local Development
 - **Ruby** 3.3.6 or higher
 - **Node.js** 20.19.6 (use nvm for version management)
 - **PostgreSQL** 9.3 or higher
@@ -135,12 +140,23 @@ Frontend UI runs at `http://localhost:3001`
 - **Backend API**: http://localhost:3000
 - **Health Check**: http://localhost:3000/up
 
-### Using Docker
+### Option 3: Using Docker (No System Dependencies)
+
+The easiest way to run the application without installing Ruby, Node.js, or PostgreSQL:
 
 ```bash
-docker build -t flexcar-demo .
-docker run -p 3000:3000 flexcar-demo
+docker compose up
 ```
+
+This will start:
+- PostgreSQL database
+- Redis cache
+- Rails backend (port 3000)
+- Next.js frontend (port 3001)
+
+Access the application at **http://localhost:3001**
+
+For detailed Docker instructions, see [DOCKER_SETUP.md](DOCKER_SETUP.md)
 
 ## Testing
 

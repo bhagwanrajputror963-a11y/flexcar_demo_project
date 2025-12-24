@@ -79,7 +79,7 @@ export default function ItemList({ items, onAddToCart }: ItemListProps) {
                         }`}>
                           {item.stock_quantity === 0
                             ? 'Out of Stock'
-                            : `Stock: ${item.stock_quantity}${item.sale_unit === 'weight' ? 'g' : ''}`
+                            : `${item.stock_quantity} item${item.stock_quantity !== 1 ? 's' : ''} left${item.sale_unit === 'weight' ? ' (g)' : ''}`
                           }
                         </span>
                       )}
