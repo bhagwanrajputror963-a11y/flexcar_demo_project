@@ -80,7 +80,7 @@ export default function ItemList({ items, onAddToCart }: ItemListProps) {
                         type="number"
                         id={`weight-${item.id}`}
                         min="1"
-                        step="0.1"
+                        step="1"
                         value={weights[item.id] || 1}
                         onChange={(e) => handleWeightChange(item.id, e.target.value)}
                         className="w-20 px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500"

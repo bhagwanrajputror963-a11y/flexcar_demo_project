@@ -196,10 +196,6 @@ export default function Home() {
         <PromotionsList promotions={promotions} />
       </div>
 
-      {/* Promo Code Input */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <PromoCodeInput cartId={cartId} onPromoApplied={fetchCart} />
-      </div>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -209,13 +205,16 @@ export default function Home() {
             <ItemList items={items} onAddToCart={handleAddToCart} />
           </div>
 
-          {/* Right Column: Cart */}
+          {/* Right Column: Promo Code + Cart */}
           <div>
-            <CartView
-              cart={cart}
-              onRemoveItem={handleRemoveFromCart}
-              onClearCart={handleClearCart}
-            />
+            <PromoCodeInput cartId={cartId} onPromoApplied={fetchCart} />
+            <div className="mt-4">
+              <CartView
+                cart={cart}
+                onRemoveItem={handleRemoveFromCart}
+                onClearCart={handleClearCart}
+              />
+            </div>
           </div>
         </div>
       </main>
