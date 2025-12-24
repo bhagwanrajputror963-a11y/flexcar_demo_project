@@ -40,6 +40,9 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
+# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS)
+gem "rack-cors"
+
 gem 'flexcar_promotions', git: 'https://github.com/bhagwanrajputror963-a11y/flexcar_promotions.git', branch: 'main'
 
 group :development, :test do

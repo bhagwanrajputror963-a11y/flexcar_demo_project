@@ -59,7 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_17_052931) do
     t.index ["category_id"], name: "index_flexcar_promotions_items_on_category_id"
     t.index ["sale_unit"], name: "index_flexcar_promotions_items_on_sale_unit"
     t.check_constraint "price > 0::numeric", name: "price_positive"
-    t.check_constraint "sale_unit::text = ANY (ARRAY['quantity'::character varying, 'weight'::character varying]::text[])", name: "valid_sale_unit"
+    t.check_constraint "sale_unit::text = ANY (ARRAY['quantity'::character varying::text, 'weight'::character varying::text])", name: "valid_sale_unit"
   end
 
   create_table "flexcar_promotions_promotions", force: :cascade do |t|
@@ -79,8 +79,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_17_052931) do
     t.index ["start_time"], name: "index_flexcar_promotions_promotions_on_start_time"
     t.index ["target_type", "target_id"], name: "index_promotions_on_target"
     t.check_constraint "end_time IS NULL OR end_time > start_time", name: "valid_time_range"
-    t.check_constraint "promotion_type::text = ANY (ARRAY['flat_discount'::character varying, 'percentage_discount'::character varying, 'buy_x_get_y'::character varying, 'weight_threshold'::character varying]::text[])", name: "valid_promotion_type"
-    t.check_constraint "target_type::text = ANY (ARRAY['Item'::character varying, 'Category'::character varying]::text[])", name: "valid_target_type"
+    t.check_constraint "promotion_type::text = ANY (ARRAY['flat_discount'::character varying::text, 'percentage_discount'::character varying::text, 'buy_x_get_y'::character varying::text, 'weight_threshold'::character varying::text])", name: "valid_promotion_type"
+    t.check_constraint "target_type::text = ANY (ARRAY['Item'::character varying::text, 'Category'::character varying::text])", name: "valid_target_type"
     t.check_constraint "value >= 0::numeric", name: "value_non_negative"
   end
 
