@@ -44,35 +44,37 @@ describe('ItemList', () => {
 
   it('shows quantity input for quantity-based items', () => {
     render(<ItemList items={mockItems} onAddToCart={mockOnAddToCart} />);
-    const quantityInputs = screen.getAllByLabelText(/quantity/i);
-    expect(quantityInputs.length).toBeGreaterThan(0);
+    const quantityInput = screen.getByPlaceholderText('Qty');
+    expect(quantityInput).toBeInTheDocument();
   });
 
   it('shows weight input for weight-based items', () => {
     render(<ItemList items={mockItems} onAddToCart={mockOnAddToCart} />);
-    const weightInputs = screen.getAllByLabelText(/weight/i);
-    expect(weightInputs.length).toBeGreaterThan(0);
+    const weightInput = screen.getByPlaceholderText('Grams');
+    expect(weightInput).toBeInTheDocument();
   });
 
   it('calls onAddToCart with correct parameters for quantity item', async () => {
     render(<ItemList items={mockItems} onAddToCart={mockOnAddToCart} />);
 
-    const quantityInput = screen.getAllByLabelText(/quantity/i)[0];
-    const addButton = screen.getAllByText(/add to cart/i)[0];
+    const quantityInput = screen.getByPlaceholderText('Qty');
+    const addButtons = screen.getAllByRole('button', { name: /add/i });
+    const addButton = addButtons[0];
 
     fireEvent.change(quantityInput, { target: { value: '2' } });
     fireEvent.click(addButton);
 
     await waitFor(() => {
-      expect(mockOnAddToCart).toHaveBeenCalledWith(mockItems[0], 2, undefined);
+      expect(mockOnAddToCart).toHaveBeenCalledWith(mockItems[0], 2);
     });
   });
 
   it('calls onAddToCart with correct parameters for weight item', async () => {
     render(<ItemList items={mockItems} onAddToCart={mockOnAddToCart} />);
 
-    const weightInput = screen.getAllByLabelText(/weight/i)[0];
-    const addButton = screen.getAllByText(/add to cart/i)[1];
+    const weightInput = screen.getByPlaceholderText('Grams');
+    const addButtons = screen.getAllByRole('button', { name: /add/i });
+    const addButton = addButtons[1];
 
     fireEvent.change(weightInput, { target: { value: '250' } });
     fireEvent.click(addButton);

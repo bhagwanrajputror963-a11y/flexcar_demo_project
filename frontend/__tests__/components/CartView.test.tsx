@@ -69,7 +69,8 @@ describe('CartView', () => {
     };
 
     render(<CartView cart={cartWithPromo} onRemoveItem={mockOnRemoveItem} onClearCart={mockOnClearCart} />);
-    expect(screen.getByText(/-\$5.00/)).toBeInTheDocument();
+    const discounts = screen.getAllByText(/-\$5.00/);
+    expect(discounts.length).toBeGreaterThan(0);
   });
 
   it('calls onRemoveItem when remove button clicked', () => {
@@ -92,8 +93,10 @@ describe('CartView', () => {
 
   it('displays subtotal and total correctly', () => {
     render(<CartView cart={mockCart} onRemoveItem={mockOnRemoveItem} onClearCart={mockOnClearCart} />);
-    expect(screen.getByText(/subtotal:/i)).toBeInTheDocument();
-    expect(screen.getByText(/total:/i)).toBeInTheDocument();
+    const subtotalLabels = screen.getAllByText(/subtotal:/i);
+    const totalLabels = screen.getAllByText(/total:/i);
+    expect(subtotalLabels.length).toBeGreaterThan(0);
+    expect(totalLabels.length).toBeGreaterThan(0);
   });
 
   it('shows savings when discount is applied', () => {

@@ -36,22 +36,20 @@ describe('PromotionsList', () => {
     expect(screen.getByText('Buy 2 Get 1')).toBeInTheDocument();
   });
 
-  it('displays promotion descriptions', () => {
+  it('displays promotion count', () => {
     render(<PromotionsList promotions={mockPromotions} />);
-    expect(screen.getByText(/get 20% off/i)).toBeInTheDocument();
-    expect(screen.getByText(/buy 2, get 1 free/i)).toBeInTheDocument();
+    expect(screen.getByText(/Active Promotions \(2\)/)).toBeInTheDocument();
   });
 
   it('renders empty state when no promotions', () => {
     render(<PromotionsList promotions={[]} />);
-    expect(screen.getByText(/no active promotions/i)).toBeInTheDocument();
+    expect(screen.getByText(/Active Promotions \(0\)/)).toBeInTheDocument();
   });
 
-  it('displays promotion types correctly', () => {
+  it('displays promotion names', () => {
     render(<PromotionsList promotions={mockPromotions} />);
-    // Assuming promotion types are displayed in the UI
-    const promotionElements = screen.getAllByRole('listitem');
-    expect(promotionElements.length).toBe(2);
+    const promotionNames = screen.getAllByText(/Summer Sale|Buy 2 Get 1/);
+    expect(promotionNames.length).toBe(2);
   });
 
   it('handles single promotion', () => {

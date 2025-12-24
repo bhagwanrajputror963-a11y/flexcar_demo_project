@@ -14,7 +14,7 @@ describe('PromoCodeInput', () => {
 
   it('renders promo code input field', () => {
     render(<PromoCodeInput cartId={cartId} onPromoApplied={mockOnPromoApplied} />);
-    expect(screen.getByPlaceholderText(/enter promo code/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/enter code/i)).toBeInTheDocument();
   });
 
   it('applies valid promo code successfully', async () => {
@@ -25,7 +25,7 @@ describe('PromoCodeInput', () => {
 
     render(<PromoCodeInput cartId={cartId} onPromoApplied={mockOnPromoApplied} />);
 
-    const input = screen.getByPlaceholderText(/enter promo code/i);
+    const input = screen.getByPlaceholderText(/enter code/i);
     const button = screen.getByText(/apply/i);
 
     fireEvent.change(input, { target: { value: 'SAVE10' } });
@@ -45,7 +45,7 @@ describe('PromoCodeInput', () => {
 
     render(<PromoCodeInput cartId={cartId} onPromoApplied={mockOnPromoApplied} />);
 
-    const input = screen.getByPlaceholderText(/enter promo code/i);
+    const input = screen.getByPlaceholderText(/enter code/i);
     const button = screen.getByText(/apply/i);
 
     fireEvent.change(input, { target: { value: 'INVALID' } });
@@ -66,7 +66,7 @@ describe('PromoCodeInput', () => {
   it('does not apply promo when cartId is null', () => {
     render(<PromoCodeInput cartId={null} onPromoApplied={mockOnPromoApplied} />);
 
-    const input = screen.getByPlaceholderText(/enter promo code/i);
+    const input = screen.getByPlaceholderText(/enter code/i);
     const button = screen.getByText(/apply/i);
 
     fireEvent.change(input, { target: { value: 'SAVE10' } });
@@ -85,7 +85,7 @@ describe('PromoCodeInput', () => {
 
     render(<PromoCodeInput cartId={cartId} onPromoApplied={mockOnPromoApplied} />);
 
-    const input = screen.getByPlaceholderText(/enter promo code/i);
+    const input = screen.getByPlaceholderText(/enter code/i);
     const button = screen.getByText(/apply/i);
 
     fireEvent.change(input, { target: { value: 'SAVE10' } });
