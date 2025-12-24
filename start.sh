@@ -23,7 +23,11 @@ if ! command -v ruby &> /dev/null; then
     exit 1
 fi
 
-if ! command -v node &> /dev/null; then
+# Check for nvm and set Node version
+if command -v nvm &> /dev/null; then
+    echo "Setting Node.js version to 22..."
+    nvm use 22 2>/dev/null || nvm install 22
+elif ! command -v node &> /dev/null; then
     echo -e "${RED}❌ Node.js is not installed${NC}"
     exit 1
 fi
@@ -109,23 +113,42 @@ if [[ $start_servers =~ ^[Yy]$ ]]; then
     echo ""
     echo "Starting servers..."
     echo ""
-    
+
     # Start Rails in background
     echo "Starting Rails server on port 3000..."
     rails server &
     RAILS_PID=$!
-    
-    # Wait a bit for Rails to start
-    sleep 3
-    
+
+    # Wait for Rails to be ready
+    echo "Waiting for Rails server to be ready..."
+    max_attempts=30
+    attempt=0
+    until curl -s http://localhost:3000/up > /dev/null 2>&1; do
+        if [ $attempt -ge $max_attempts ]; then
+            echo -e "${RED}Rails server failed to start${NC}"
+            kill $RAILS_PID 2>/dev/null
+            exit 1
+        fi
+        attempt=$((attempt + 1))
+        sleep 1
+    done
+    echo -e "${GREEN}Rails server is ready!${NC}"
+
     # Start Next.js in background
     echo "Starting Next.js server on port 3001..."
     cd frontend
-    npm run dev &
+
+    # Use Node 22 if nvm is available
+    if command -v nvm &> /dev/null; then
+        source ~/.nvm/nvm.sh && nvm use 22 && npm run dev &
+    else
+        npm run dev &
+    fi
+
     NEXTJS_PID=$!
-    
+
     cd ..
-    
+
     echo ""
     echo -e "${GREEN}✓ Both servers are running!${NC}"
     echo ""
@@ -134,10 +157,10 @@ if [[ $start_servers =~ ^[Yy]$ ]]; then
     echo ""
     echo "Press Ctrl+C to stop both servers"
     echo ""
-    
+
     # Trap Ctrl+C and kill both processes
     trap "echo ''; echo 'Stopping servers...'; kill $RAILS_PID $NEXTJS_PID 2>/dev/null; exit" INT
-    
+
     # Wait for processes
     wait
 else
