@@ -74,6 +74,16 @@ export const cartsAPI = {
     const response = await api.delete(`/carts/${cartId}/clear`);
     return response.data;
   },
+
+  applyPromo: async (cartId: number, promoCode: string): Promise<{ cart: Cart; message: string }> => {
+    const response = await api.post(`/carts/${cartId}/apply_promo`, { promo_code: promoCode });
+    return response.data;
+  },
+
+  removePromo: async (cartId: number, promoCode: string): Promise<{ cart: Cart; message: string }> => {
+    const response = await api.delete(`/carts/${cartId}/remove_promo`, { data: { promo_code: promoCode } });
+    return response.data;
+  },
 };
 
 export default api;

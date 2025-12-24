@@ -63,7 +63,7 @@ export default function CartView({ cart, onRemoveItem, onClearCart }: CartViewPr
                       {item.applied_promotion && (
                         <div className="mt-1.5 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-50 text-green-700 border border-green-200">
                           <CheckCircleIcon className="h-3 w-3 mr-1" />
-                          -{item.applied_promotion.discount_amount.toFixed(2)}
+                          -${item.applied_promotion.discount_amount.toFixed(2)}
                         </div>
                       )}
 

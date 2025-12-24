@@ -1,7 +1,5 @@
-GIT
-  remote: https://github.com/bhagwanrajputror963-a11y/flexcar_promotions.git
-  revision: edb539350c402ce8616a4631eb968d54a9eb0979
-  branch: main
+PATH
+  remote: ../flexcar_promotions
   specs:
     flexcar_promotions (0.1.0)
       pg (~> 1.5)

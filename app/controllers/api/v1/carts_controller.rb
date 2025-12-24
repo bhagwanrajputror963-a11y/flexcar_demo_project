@@ -80,6 +80,40 @@ module Api
         render json: { error: e.message }, status: :unprocessable_entity
       end
 
+      # POST /api/v1/carts/:id/apply_promo
+      def apply_promo
+        result = @cart.apply_promo_code(params[:promo_code])
+
+        if result[:success]
+          pricing = @cart.calculate_total
+          render json: {
+            cart: serialize_cart(@cart, pricing),
+            message: "Promo code '#{params[:promo_code]}' applied successfully"
+          }
+        else
+          render json: { error: result[:error] }, status: :unprocessable_entity
+        end
+      rescue StandardError => e
+        render json: { error: e.message }, status: :unprocessable_entity
+      end
+
+      # DELETE /api/v1/carts/:id/remove_promo
+      def remove_promo
+        result = @cart.remove_promo_code(params[:promo_code])
+
+        if result[:success]
+          pricing = @cart.calculate_total
+          render json: {
+            cart: serialize_cart(@cart, pricing),
+            message: "Promo code '#{params[:promo_code]}' removed successfully"
+          }
+        else
+          render json: { error: result[:error] }, status: :unprocessable_entity
+        end
+      rescue StandardError => e
+        render json: { error: e.message }, status: :unprocessable_entity
+      end
+
       private
 
       def set_cart
@@ -95,6 +129,7 @@ module Api
           subtotal: pricing[:subtotal].to_f,
           total_discount: pricing[:total_discount].to_f,
           total: pricing[:total].to_f,
+          applied_promotion_ids: cart.applied_promotion_ids,
           created_at: cart.created_at,
           updated_at: cart.updated_at
         }

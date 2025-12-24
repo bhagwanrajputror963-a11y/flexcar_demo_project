@@ -8,6 +8,7 @@ import CartView from '@/components/CartView';
 import PromotionsList from '@/components/PromotionsList';
 import ErrorAlert from '@/components/ErrorAlert';
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
+import PromoCodeInput from '@/components/PromoCodeInput';
 
 export default function Home() {
   const [items, setItems] = useState<Item[]>([]);
@@ -193,6 +194,11 @@ export default function Home() {
       {/* Active Promotions Banner */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         <PromotionsList promotions={promotions} />
+      </div>
+
+      {/* Promo Code Input */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <PromoCodeInput cartId={cartId} onPromoApplied={fetchCart} />
       </div>
 
       {/* Main Content */}

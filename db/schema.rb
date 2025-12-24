@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_17_052931) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_24_082918) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -36,6 +36,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_17_052931) do
   end
 
   create_table "flexcar_promotions_carts", force: :cascade do |t|
+    t.text "applied_promotion_ids"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -67,6 +68,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_17_052931) do
     t.datetime "created_at", null: false
     t.datetime "end_time"
     t.string "name", limit: 255, null: false
+    t.string "promo_code"
     t.string "promotion_type", limit: 50, null: false
     t.datetime "start_time", null: false
     t.integer "target_id"
@@ -74,6 +76,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_17_052931) do
     t.datetime "updated_at", null: false
     t.decimal "value", precision: 10, scale: 2
     t.index ["end_time"], name: "index_flexcar_promotions_promotions_on_end_time"
+    t.index ["promo_code"], name: "index_flexcar_promotions_promotions_on_promo_code", unique: true
     t.index ["promotion_type"], name: "index_flexcar_promotions_promotions_on_promotion_type"
     t.index ["start_time", "end_time"], name: "index_promotions_on_time_range"
     t.index ["start_time"], name: "index_flexcar_promotions_promotions_on_start_time"

@@ -209,6 +209,7 @@ FlexcarPromotions::Promotion.create!(
   promotion_type: 'flat_discount',
   value: 200.00,
   target: laptop,
+  promo_code: 'MACBOOK200',
   start_time: Time.current,
   end_time: 2.weeks.from_now
 )
@@ -219,6 +220,7 @@ FlexcarPromotions::Promotion.create!(
   promotion_type: 'percentage_discount',
   value: 15,
   target: dell_laptop,
+  promo_code: 'DELL15',
   start_time: Time.current,
   end_time: 1.week.from_now
 )
@@ -228,6 +230,7 @@ FlexcarPromotions::Promotion.create!(
   name: 'Buy 2 Mice Get 1 Free',
   promotion_type: 'buy_x_get_y',
   target: mouse,
+  promo_code: 'MOUSE2FOR1',
   start_time: Time.current,
   config: {
     'buy_quantity' => 2,
@@ -242,6 +245,7 @@ FlexcarPromotions::Promotion.create!(
   promotion_type: 'weight_threshold',
   value: 50,
   target: coffee,
+  promo_code: 'COFFEE50',
   start_time: Time.current,
   config: {
     'threshold_weight' => 200
@@ -254,6 +258,7 @@ FlexcarPromotions::Promotion.create!(
   promotion_type: 'percentage_discount',
   value: 10,
   target: accessories,
+  promo_code: 'ACCESSORIES10',
   start_time: Time.current,
   end_time: 1.month.from_now
 )
@@ -264,6 +269,7 @@ FlexcarPromotions::Promotion.create!(
   promotion_type: 'weight_threshold',
   value: 30,
   target: premium_coffee,
+  promo_code: 'PREMIUM30',
   start_time: Time.current,
   config: {
     'threshold_weight' => 150

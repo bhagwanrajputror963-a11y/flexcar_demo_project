@@ -10,12 +10,14 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :items, only: [:index, :show]
       resources :promotions, only: [:index, :show]
-      
+
       resources :carts, only: [:create, :show] do
         member do
           post :add_item
           delete 'remove_item/:item_id', action: :remove_item, as: :remove_item
           delete :clear
+          post :apply_promo
+          delete :remove_promo
         end
       end
     end
