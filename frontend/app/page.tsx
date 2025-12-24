@@ -19,6 +19,7 @@ import Toast from '@/components/Toast';
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -94,7 +95,7 @@ import Toast from '@/components/Toast';
   const handleAddToCart = async (item: Item, quantity: number, weight?: number) => {
     if (!cartId) return;
     try {
-      setError(null);
+      setErrorMessage(null);
       const { cart: updatedCart, message } = await cartsAPI.addItem(
         cartId,
         item.id,
@@ -103,9 +104,13 @@ import Toast from '@/components/Toast';
       );
       setCart(updatedCart);
       setSuccessMessage(message);
+      setErrorMessage(null);
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.error || err.message || 'Failed to add item to cart');
+      const errorMsg = err.response?.data?.error || err.message || 'Failed to add item to cart';
+      setErrorMessage(errorMsg);
+      setSuccessMessage(null);
+      setTimeout(() => setErrorMessage(null), 5000);
     }
   };
 
@@ -160,10 +165,21 @@ import Toast from '@/components/Toast';
                 Smart promotions automatically applied to your cart
               </p>
             </div>
-            <a href="/cart" className="flex items-center space-x-2 text-indigo-600 hover:text-indigo-800 transition-colors">
-              <ShoppingCartIcon className="h-8 w-8" />
-              <span className="text-2xl font-bold">{cart?.items.length || 0}</span>
-            </a>
+            <div className="flex items-center gap-4">
+              <a
+                href="/inventory"
+                className="text-sm font-medium text-gray-700 hover:text-indigo-600 px-4 py-2 rounded-md border border-gray-300 hover:border-indigo-300 bg-white transition-colors"
+              >
+                📦 Manage Inventory
+              </a>
+              <a
+                href="/cart"
+                className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+              >
+                <ShoppingCartIcon className="h-5 w-5" />
+                <span>View Cart {cart && cart.items.length > 0 && `(${cart.items.length})`}</span>
+              </a>
+            </div>
           </div>
         </div>
       </header>
@@ -176,6 +192,7 @@ import Toast from '@/components/Toast';
       )}
 
       <Toast message={successMessage || ''} type="success" onClose={() => setSuccessMessage(null)} duration={5000} />
+      <Toast message={errorMessage || ''} type="error" onClose={() => setErrorMessage(null)} duration={5000} />
 
       {/* Active Promotions Banner */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">

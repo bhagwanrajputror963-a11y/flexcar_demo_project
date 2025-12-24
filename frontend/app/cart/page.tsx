@@ -10,6 +10,7 @@ export default function CartPage() {
   const [cart, setCart] = useState<Cart | null>(null);
   const [cartId, setCartId] = useState<number | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const savedCartId = localStorage.getItem('cartId');
@@ -34,6 +35,24 @@ export default function CartPage() {
     setTimeout(() => setSuccessMessage(null), 5000);
   };
 
+  const handleUpdateItem = async (itemId: number, quantity?: number, weight?: number) => {
+    if (!cartId) return;
+    try {
+      const { cart: updatedCart, message } = await cartsAPI.updateItem(cartId, itemId, quantity, weight);
+      setCart(updatedCart);
+      setSuccessMessage(message);
+      setErrorMessage(null);
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (error: any) {
+      const errorMsg = error?.response?.data?.error || 'Failed to update item';
+      setErrorMessage(errorMsg);
+      setSuccessMessage(null);
+      setTimeout(() => setErrorMessage(null), 5000);
+      // Refresh cart to reset to actual quantities
+      if (cartId) fetchCart(cartId);
+    }
+  };
+
   const handleClearCart = async () => {
     if (!cartId) return;
     const { cart: updatedCart, message } = await cartsAPI.clear(cartId);
@@ -52,7 +71,12 @@ export default function CartPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left: Items List */}
           <div>
-            <CartView cart={cart} onRemoveItem={handleRemoveFromCart} onClearCart={handleClearCart} />
+            <CartView
+              cart={cart}
+              onRemoveItem={handleRemoveFromCart}
+              onClearCart={handleClearCart}
+              onUpdateItem={handleUpdateItem}
+            />
           </div>
           {/* Right: Promo, Summary, Checkout */}
           <div className="bg-white rounded-lg shadow p-6 flex flex-col gap-6">
@@ -81,6 +105,7 @@ export default function CartPage() {
           </div>
         </div>
         <Toast message={successMessage || ''} type="success" onClose={() => setSuccessMessage(null)} duration={5000} />
+        <Toast message={errorMessage || ''} type="error" onClose={() => setErrorMessage(null)} duration={5000} />
       </div>
     </div>
   );

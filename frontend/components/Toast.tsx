@@ -19,7 +19,7 @@ export default function Toast({ message, type = 'success', onClose, duration = 3
 
   return (
     <div
-      className={`fixed top-8 right-8 z-50 min-w-[220px] max-w-xs px-5 py-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-toast-in
+      className={`fixed bottom-8 right-8 z-50 min-w-[220px] max-w-xs px-5 py-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-toast-in
         ${type === 'success' ? 'bg-green-50 border-green-300 text-green-900' : 'bg-red-50 border-red-300 text-red-900'}`}
       style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}
     >

@@ -62,6 +62,20 @@ export const cartsAPI = {
     return response.data;
   },
 
+  updateItem: async (
+    cartId: number,
+    itemId: number,
+    quantity?: number,
+    weight?: number
+  ): Promise<{ cart: Cart; message: string }> => {
+    const response = await api.patch(`/carts/${cartId}/update_item/${itemId}`, {
+      item_id: itemId,
+      quantity,
+      weight,
+    });
+    return response.data;
+  },
+
   removeItem: async (
     cartId: number,
     itemId: number
@@ -82,6 +96,33 @@ export const cartsAPI = {
 
   removePromo: async (cartId: number, promoCode: string): Promise<{ cart: Cart; message: string }> => {
     const response = await api.delete(`/carts/${cartId}/remove_promo`, { data: { promo_code: promoCode } });
+    return response.data;
+  },
+};
+
+// Inventory API
+export const inventoryAPI = {
+  getAll: async (): Promise<Item[]> => {
+    const response = await api.get('/inventory');
+    return response.data.items;
+  },
+
+  getById: async (id: number): Promise<Item> => {
+    const response = await api.get(`/inventory/${id}`);
+    return response.data.item;
+  },
+
+  update: async (id: number, stock_quantity: number): Promise<{ item: Item; message: string }> => {
+    const response = await api.patch(`/inventory/${id}`, {
+      item: { stock_quantity }
+    });
+    return response.data;
+  },
+
+  adjustStock: async (id: number, adjustment: number): Promise<{ item: Item; message: string }> => {
+    const response = await api.patch(`/inventory/${id}/adjust_stock`, {
+      adjustment
+    });
     return response.data;
   },
 };

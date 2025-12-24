@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_24_082918) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_24_101731) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -55,12 +55,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_082918) do
     t.string "name", limit: 255, null: false
     t.decimal "price", precision: 10, scale: 2, null: false
     t.string "sale_unit", limit: 20, null: false
+    t.integer "stock_quantity", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["brand_id"], name: "index_flexcar_promotions_items_on_brand_id"
     t.index ["category_id"], name: "index_flexcar_promotions_items_on_category_id"
     t.index ["sale_unit"], name: "index_flexcar_promotions_items_on_sale_unit"
     t.check_constraint "price > 0::numeric", name: "price_positive"
     t.check_constraint "sale_unit::text = ANY (ARRAY['quantity'::character varying::text, 'weight'::character varying::text])", name: "valid_sale_unit"
+    t.check_constraint "stock_quantity >= 0", name: "stock_quantity_non_negative"
   end
 
   create_table "flexcar_promotions_promotions", force: :cascade do |t|

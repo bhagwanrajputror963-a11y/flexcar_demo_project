@@ -8,7 +8,7 @@ module Api
       # GET /api/v1/items
       def index
         @items = FlexcarPromotions::Item.includes(:category, :brand).all
-        
+
         render json: {
           items: @items.map { |item| serialize_item(item) }
         }
@@ -17,7 +17,7 @@ module Api
       # GET /api/v1/items/:id
       def show
         @item = FlexcarPromotions::Item.find(params[:id])
-        
+
         render json: {
           item: serialize_item(@item)
         }
@@ -35,6 +35,8 @@ module Api
           sale_unit: item.sale_unit,
           category: item.category&.name,
           brand: item.brand&.name,
+          stock_quantity: item.stock_quantity || 0,
+          in_stock: item.in_stock?,
           created_at: item.created_at,
           updated_at: item.updated_at
         }

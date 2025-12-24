@@ -11,9 +11,16 @@ Rails.application.routes.draw do
       resources :items, only: [:index, :show]
       resources :promotions, only: [:index, :show]
 
+      resources :inventory, only: [:index, :show, :update] do
+        member do
+          patch :adjust_stock
+        end
+      end
+
       resources :carts, only: [:create, :show] do
         member do
           post :add_item
+          patch 'update_item/:item_id', action: :update_item, as: :update_item
           delete 'remove_item/:item_id', action: :remove_item, as: :remove_item
           delete :clear
           post :apply_promo

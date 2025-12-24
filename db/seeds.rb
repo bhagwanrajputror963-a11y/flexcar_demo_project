@@ -41,7 +41,8 @@ laptop = FlexcarPromotions::Item.create!(
   price: 2000.00,
   sale_unit: 'quantity',
   brand: apple,
-  category: electronics
+  category: electronics,
+  stock_quantity: 15
 )
 
 dell_laptop = FlexcarPromotions::Item.create!(
@@ -49,7 +50,8 @@ dell_laptop = FlexcarPromotions::Item.create!(
   price: 1500.00,
   sale_unit: 'quantity',
   brand: dell,
-  category: electronics
+  category: electronics,
+  stock_quantity: 20
 )
 
 mouse = FlexcarPromotions::Item.create!(
@@ -57,7 +59,8 @@ mouse = FlexcarPromotions::Item.create!(
   price: 99.99,
   sale_unit: 'quantity',
   brand: logitech,
-  category: accessories
+  category: accessories,
+  stock_quantity: 50
 )
 
 keyboard = FlexcarPromotions::Item.create!(
@@ -65,7 +68,8 @@ keyboard = FlexcarPromotions::Item.create!(
   price: 199.99,
   sale_unit: 'quantity',
   brand: corsair,
-  category: accessories
+  category: accessories,
+  stock_quantity: 30
 )
 
 # Weight-based items
@@ -74,7 +78,8 @@ coffee = FlexcarPromotions::Item.create!(
   price: 0.05,
   sale_unit: 'weight',
   brand: starbucks,
-  category: food
+  category: food,
+  stock_quantity: 5000
 )
 
 premium_coffee = FlexcarPromotions::Item.create!(
@@ -82,7 +87,8 @@ premium_coffee = FlexcarPromotions::Item.create!(
   price: 0.08,
   sale_unit: 'weight',
   brand: starbucks,
-  category: food
+  category: food,
+  stock_quantity: 3000
 )
 
 # Additional Electronics
@@ -91,7 +97,8 @@ FlexcarPromotions::Item.create!(
   price: 899.99,
   sale_unit: 'quantity',
   brand: hp,
-  category: electronics
+  category: electronics,
+  stock_quantity: 25
 )
 
 FlexcarPromotions::Item.create!(
@@ -99,7 +106,8 @@ FlexcarPromotions::Item.create!(
   price: 1299.99,
   sale_unit: 'quantity',
   brand: lenovo,
-  category: electronics
+  category: electronics,
+  stock_quantity: 18
 )
 
 FlexcarPromotions::Item.create!(
@@ -107,7 +115,8 @@ FlexcarPromotions::Item.create!(
   price: 799.99,
   sale_unit: 'quantity',
   brand: samsung,
-  category: electronics
+  category: electronics,
+  stock_quantity: 22
 )
 
 FlexcarPromotions::Item.create!(
@@ -115,7 +124,8 @@ FlexcarPromotions::Item.create!(
   price: 1099.00,
   sale_unit: 'quantity',
   brand: apple,
-  category: electronics
+  category: electronics,
+  stock_quantity: 12
 )
 
 # Additional Accessories
@@ -124,7 +134,8 @@ FlexcarPromotions::Item.create!(
   price: 69.99,
   sale_unit: 'quantity',
   brand: razer,
-  category: accessories
+  category: accessories,
+  stock_quantity: 45
 )
 
 FlexcarPromotions::Item.create!(
@@ -132,7 +143,8 @@ FlexcarPromotions::Item.create!(
   price: 79.99,
   sale_unit: 'quantity',
   brand: logitech,
-  category: accessories
+  category: accessories,
+  stock_quantity: 35
 )
 
 FlexcarPromotions::Item.create!(
@@ -140,7 +152,8 @@ FlexcarPromotions::Item.create!(
   price: 349.99,
   sale_unit: 'quantity',
   brand: sony,
-  category: accessories
+  category: accessories,
+  stock_quantity: 28
 )
 
 FlexcarPromotions::Item.create!(

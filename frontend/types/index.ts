@@ -5,6 +5,8 @@ export interface Item {
   sale_unit: 'quantity' | 'weight';
   category: string;
   brand: string;
+  stock_quantity?: number;
+  in_stock?: boolean;
   created_at: string;
   updated_at: string;
 }

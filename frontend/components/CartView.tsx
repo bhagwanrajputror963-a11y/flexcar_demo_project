@@ -1,16 +1,21 @@
 'use client';
 
 import { Cart } from '@/types';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import { useState } from 'react';
 
 interface CartViewProps {
   cart: Cart | null;
   onRemoveItem: (itemId: number) => void;
   onClearCart: () => void;
+  onUpdateItem?: (itemId: number, quantity?: number, weight?: number) => void;
 }
 
-export default function CartView({ cart, onRemoveItem, onClearCart }: CartViewProps) {
+export default function CartView({ cart, onRemoveItem, onClearCart, onUpdateItem }: CartViewProps) {
+  const [editingItem, setEditingItem] = useState<number | null>(null);
+  const [tempValue, setTempValue] = useState<string>('');
+
   if (!cart) {
     return (
       <div className="bg-white rounded-lg shadow p-4">
@@ -21,6 +26,56 @@ export default function CartView({ cart, onRemoveItem, onClearCart }: CartViewPr
   }
 
   const hasItems = cart.items.length > 0;
+
+  const handleQuickAdjust = async (itemId: number, currentValue: number | null, adjustment: number, isWeight: boolean) => {
+    if (!onUpdateItem) return;
+
+    // Convert to number in case it's a string
+    const current = typeof currentValue === 'string' ? parseFloat(currentValue) : (currentValue || 0);
+    const newValue = Math.max(isWeight ? 1 : 1, current + adjustment);
+
+    try {
+      if (isWeight) {
+        await onUpdateItem(itemId, undefined, newValue);
+      } else {
+        await onUpdateItem(itemId, Math.floor(newValue), undefined);
+      }
+    } catch (error) {
+      // Error will be handled by parent component
+    }
+  };
+
+  const handleEditStart = (itemId: number, currentValue: number | null) => {
+    setEditingItem(itemId);
+    setTempValue(String(currentValue || 0));
+  };
+
+  const handleEditSave = async (itemId: number, isWeight: boolean) => {
+    if (!onUpdateItem) return;
+
+    const value = parseFloat(tempValue) || 1;
+    if (value < 1) {
+      setEditingItem(null);
+      return;
+    }
+
+    try {
+      if (isWeight) {
+        await onUpdateItem(itemId, undefined, value);
+      } else {
+        await onUpdateItem(itemId, Math.floor(value), undefined);
+      }
+      setEditingItem(null);
+    } catch (error) {
+      // Error will be handled by parent component
+      setEditingItem(null);
+    }
+  };
+
+  const handleEditCancel = () => {
+    setEditingItem(null);
+    setTempValue('');
+  };
 
   return (
     <div className="bg-white rounded-lg shadow">
@@ -53,11 +108,72 @@ export default function CartView({ cart, onRemoveItem, onClearCart }: CartViewPr
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium text-sm text-gray-900 truncate">{item.item_name}</h3>
-                      <p className="text-xs text-gray-600 mt-0.5">
-                        {item.quantity !== null
-                          ? `${item.quantity} × $${item.unit_price.toFixed(2)}`
-                          : `${item.weight}g × $${item.unit_price.toFixed(2)}`}
-                      </p>
+
+                      {/* Quantity/Weight Controls */}
+                      {onUpdateItem && (
+                        <div className="mt-2 flex items-center gap-2">
+                          {editingItem === item.item_id ? (
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="number"
+                                value={tempValue}
+                                onChange={(e) => setTempValue(e.target.value)}
+                                className="w-16 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                                min="1"
+                                step={item.quantity !== null ? "1" : "0.1"}
+                                autoFocus
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') handleEditSave(item.item_id, item.weight !== null);
+                                  if (e.key === 'Escape') handleEditCancel();
+                                }}
+                              />
+                              <button
+                                onClick={() => handleEditSave(item.item_id, item.weight !== null)}
+                                className="px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700"
+                              >
+                                ✓
+                              </button>
+                              <button
+                                onClick={handleEditCancel}
+                                className="px-2 py-1 text-xs bg-gray-400 text-white rounded hover:bg-gray-500"
+                              >
+                                ✗
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1">
+                              <button
+                                onClick={() => handleQuickAdjust(item.item_id, item.quantity || item.weight, -1, item.weight !== null)}
+                                className="p-1 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded"
+                                disabled={(item.quantity || item.weight || 0) <= 1}
+                              >
+                                <MinusIcon className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleEditStart(item.item_id, item.quantity || item.weight)}
+                                className="px-3 py-1 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded cursor-pointer"
+                              >
+                                {item.quantity !== null ? `${item.quantity}` : `${item.weight}g`}
+                              </button>
+                              <button
+                                onClick={() => handleQuickAdjust(item.item_id, item.quantity || item.weight, item.weight !== null ? 10 : 1, item.weight !== null)}
+                                className="p-1 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded"
+                              >
+                                <PlusIcon className="h-4 w-4" />
+                              </button>
+                            </div>
+                          )}
+                          <span className="text-xs text-gray-500">× ${item.unit_price.toFixed(2)}</span>
+                        </div>
+                      )}
+
+                      {!onUpdateItem && (
+                        <p className="text-xs text-gray-600 mt-0.5">
+                          {item.quantity !== null
+                            ? `${item.quantity} × $${item.unit_price.toFixed(2)}`
+                            : `${item.weight}g × $${item.unit_price.toFixed(2)}`}
+                        </p>
+                      )}
 
                       {/* Promotion Badge */}
                       {item.applied_promotion && (

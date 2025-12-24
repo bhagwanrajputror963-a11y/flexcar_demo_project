@@ -33,10 +33,47 @@ module Api
       def add_item
         item = FlexcarPromotions::Item.find(params[:item_id])
 
+        # Check stock availability
         if item.sold_by_quantity?
-          @cart.add_item(item, quantity: params[:quantity].to_i)
+          requested_qty = params[:quantity].to_i
+          available_stock = item.stock_quantity || 0
+
+          if available_stock == 0
+            render json: { error: "#{item.name} is out of stock" }, status: :unprocessable_entity
+            return
+          end
+
+          # Check if item already exists in cart
+          existing_cart_item = @cart.cart_items.find_by(item: item)
+          existing_qty = existing_cart_item&.quantity&.to_i || 0
+          total_qty = existing_qty + requested_qty
+
+          if total_qty > available_stock
+            render json: { error: "Only #{available_stock} units of #{item.name} available in stock. You already have #{existing_qty} in your cart." }, status: :unprocessable_entity
+            return
+          end
+
+          @cart.add_item(item, quantity: requested_qty)
         else
-          @cart.add_item(item, weight: params[:weight].to_f)
+          requested_weight = params[:weight].to_f
+          available_stock = item.stock_quantity || 0
+
+          if available_stock == 0
+            render json: { error: "#{item.name} is out of stock" }, status: :unprocessable_entity
+            return
+          end
+
+          # Check if item already exists in cart
+          existing_cart_item = @cart.cart_items.find_by(item: item)
+          existing_weight = existing_cart_item&.weight&.to_f || 0
+          total_weight = existing_weight + requested_weight
+
+          if total_weight > available_stock
+            render json: { error: "Only #{available_stock}g of #{item.name} available in stock. You already have #{existing_weight}g in your cart." }, status: :unprocessable_entity
+            return
+          end
+
+          @cart.add_item(item, weight: requested_weight)
         end
 
         pricing = @cart.calculate_total
@@ -44,6 +81,61 @@ module Api
         render json: {
           cart: serialize_cart(@cart, pricing),
           message: "#{item.name} added to cart"
+        }
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: 'Item not found' }, status: :not_found
+      rescue StandardError => e
+        render json: { error: e.message }, status: :unprocessable_entity
+      end
+
+      # PATCH /api/v1/carts/:id/update_item/:item_id
+      def update_item
+        item = FlexcarPromotions::Item.find(params[:item_id])
+        cart_item = @cart.cart_items.find_by(item: item)
+
+        unless cart_item
+          render json: { error: 'Item not in cart' }, status: :not_found
+          return
+        end
+
+        # Check stock availability
+        if item.sold_by_quantity?
+          requested_qty = params[:quantity].to_i
+          available_stock = item.stock_quantity || 0
+
+          if available_stock == 0
+            render json: { error: "#{item.name} is out of stock" }, status: :unprocessable_entity
+            return
+          end
+
+          if requested_qty > available_stock
+            render json: { error: "Only #{available_stock} units of #{item.name} available in stock" }, status: :unprocessable_entity
+            return
+          end
+
+          cart_item.update!(quantity: requested_qty, weight: nil)
+        else
+          requested_weight = params[:weight].to_f
+          available_stock = item.stock_quantity || 0
+
+          if available_stock == 0
+            render json: { error: "#{item.name} is out of stock" }, status: :unprocessable_entity
+            return
+          end
+
+          if requested_weight > available_stock
+            render json: { error: "Only #{available_stock}g of #{item.name} available in stock" }, status: :unprocessable_entity
+            return
+          end
+
+          cart_item.update!(weight: requested_weight, quantity: nil)
+        end
+
+        pricing = @cart.calculate_total
+
+        render json: {
+          cart: serialize_cart(@cart, pricing),
+          message: "#{item.name} quantity updated"
         }
       rescue ActiveRecord::RecordNotFound
         render json: { error: 'Item not found' }, status: :not_found
@@ -142,8 +234,8 @@ module Api
         {
           item_id: item_pricing[:item_id],
           item_name: item_pricing[:item_name],
-          quantity: item_pricing[:quantity],
-          weight: item_pricing[:weight],
+          quantity: item_pricing[:quantity]&.to_f,
+          weight: item_pricing[:weight]&.to_f,
           unit_price: unit_price,
           subtotal: item_pricing[:base_price].to_f,
           discount: item_pricing[:discount].to_f,
