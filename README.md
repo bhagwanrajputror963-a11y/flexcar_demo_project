@@ -1,83 +1,139 @@
 # Flexcar Demo Project
 
-This is a Rails 8 demonstration application showcasing the integration of the **Flexcar Promotions Engine** - a modular Rails engine for managing e-commerce inventory and promotional pricing.
+This is a full-stack demonstration application showcasing the integration of the **Flexcar Promotions Engine** - a modular Rails engine for managing e-commerce inventory and promotional pricing.
 
 ## About This Project
 
 This demo application integrates the `flexcar_promotions` engine to provide a complete example of:
-- Item and inventory management
+- Item and inventory management with stock tracking
 - Flexible promotional pricing (flat discounts, percentages, buy X get Y, weight-based)
 - Shopping cart functionality with automatic best-price calculations
 - Category and brand-based promotions
+- Real-time inventory adjustment with validation
+- Promo code application system
 
 ## Tech Stack
 
+### Backend
 - **Ruby**: 3.3.6
-- **Rails**: 8.1.1
+- **Rails**: 8.1.1 (API mode)
 - **Database**: PostgreSQL
-- **Asset Pipeline**: Propshaft
-- **Frontend**: Hotwire (Turbo + Stimulus)
 - **Background Jobs**: Solid Queue
 - **Cache**: Solid Cache
 - **WebSocket**: Solid Cable
 
+### Frontend
+- **Next.js**: 15.1.4
+- **React**: 19
+- **TypeScript**: Latest
+- **Tailwind CSS**: For styling
+- **Headless UI**: For components
+- **Node.js**: 20.19.6 (required)
+
 ## Prerequisites
 
-- Ruby 3.3.6 or higher
-- PostgreSQL 9.3 or higher
-- Bundler
+- **Ruby** 3.3.6 or higher
+- **Node.js** 20.19.6 (use nvm for version management)
+- **PostgreSQL** 9.3 or higher
+- **Bundler**
+- **npm** or **yarn**
 
 ## Installation & Setup
 
-### 1. Clone and Install Dependencies
+### Quick Start (Recommended)
+
+Use the automated setup script:
 
 ```bash
-cd flexcar_demo_project
-bundle install
+chmod +x start.sh
+./start.sh
 ```
 
-### 2. Database Setup
+This script will:
+- Check prerequisites (Ruby, Node.js 20.19.6, PostgreSQL)
+- Install dependencies (gems and npm packages)
+- Setup database and run migrations
+- Seed sample data
+- Optionally start both servers
 
-Configure your database credentials in `config/database.yml` or set environment variables:
+### Manual Setup
+
+If you prefer manual setup:
+
+#### 1. Backend Setup
 
 ```bash
+# Install Ruby dependencies
+bundle install
+
+# Configure database credentials (if needed)
 export FLEXCAR_DEMO_PROJECT_DATABASE_USERNAME="postgres"
 export FLEXCAR_DEMO_PROJECT_DATABASE_PASSWORD="postgres"
-```
 
-Create and migrate the database:
-
-```bash
+# Create and setup database
 rails db:create
 rails db:migrate
-```
-
-### 3. Install Engine Migrations
-
-The Flexcar Promotions engine migrations should already be installed. If needed:
-
-```bash
-rails flexcar_promotions:install:migrations
-rails db:migrate
-```
-
-### 4. Seed Data (Optional)
-
-```bash
 rails db:seed
 ```
 
-## Running the Application
-
-### Development Server
+#### 2. Frontend Setup
 
 ```bash
-bin/dev
-# or
-rails server
+cd frontend
+
+# Use Node.js 20.19.6
+nvm use 20.19.6  # or nvm install 20.19.6
+
+# Install npm dependencies
+npm install
+
+# Create environment file (if needed)
+cp .env.local.example .env.local
 ```
 
-The application will be available at `http://localhost:3000`
+#### 3. Engine Gem
+
+The `flexcar_promotions` engine is loaded from GitHub:
+
+```ruby
+gem 'flexcar_promotions',
+  git: 'https://github.com/bhagwanrajputror963-a11y/flexcar_promotions.git',
+  branch: 'main'
+```
+
+Engine migrations are automatically loaded and run with the demo project migrations.
+
+## Running the Application
+
+### Option 1: Automated Start (Recommended)
+
+```bash
+./start.sh
+```
+
+Choose "yes" when prompted to start servers automatically.
+
+### Option 2: Manual Start
+
+**Terminal 1 - Rails Backend:**
+```bash
+rails server
+```
+Backend API runs at `http://localhost:3000`
+
+**Terminal 2 - Next.js Frontend:**
+```bash
+cd frontend
+nvm use 20.19.6
+npm run dev
+```
+Frontend UI runs at `http://localhost:3001`
+
+### Accessing the Application
+
+- **Frontend**: http://localhost:3001
+- **Backend API**: http://localhost:3000
+- **Health Check**: http://localhost:3000/up
 
 ### Using Docker
 
@@ -88,20 +144,74 @@ docker run -p 3000:3000 flexcar-demo
 
 ## Testing
 
-Run the test suite:
+### Backend Tests
+
+Run the engine test suite:
 
 ```bash
-rails test
-# or
-rails test:system  # for system tests
+cd ../flexcar_promotions
+bundle exec rspec
 ```
+
+Expected output: 97 examples, 0 failures
+
+### Frontend Tests
+
+```bash
+cd frontend
+npm run lint          # ESLint validation
+npm run build        # Production build test
+npm run test         # Jest tests (if configured)
+```
+
+### Code Quality
+
+```bash
+# Ruby code quality
+bin/rubocop
+
+# Security scanning
+bin/brakeman
+bin/bundler-audit
+```
+
+## API Endpoints
+
+The backend provides RESTful APIs at `http://localhost:3000/api/v1`:
+
+### Items
+- `GET /api/v1/items` - List all items with stock info
+- `GET /api/v1/items/:id` - Get item details
+
+### Cart
+- `GET /api/v1/carts/:id` - Get cart details
+- `POST /api/v1/carts` - Create new cart
+- `POST /api/v1/carts/:id/add_item` - Add item (with stock validation)
+- `PATCH /api/v1/carts/:id/update_item` - Update quantity/weight
+- `DELETE /api/v1/carts/:id/remove_item/:item_id` - Remove item
+- `DELETE /api/v1/carts/:id/clear` - Clear cart
+- `POST /api/v1/carts/:id/apply_promo` - Apply promo code
+
+### Inventory
+- `GET /api/v1/inventory` - List all inventory
+- `POST /api/v1/inventory/:id/adjust_stock` - Adjust stock levels
+
+### Promotions
+- `GET /api/v1/promotions` - List active promotions
 
 ## Flexcar Promotions Engine
 
-This demo integrates the Flexcar Promotions engine located in `../flexcar_promotions`. The engine provides:
+This demo integrates the Flexcar Promotions engine from GitHub:
+
+```ruby
+gem 'flexcar_promotions',
+  git: 'https://github.com/bhagwanrajputror963-a11y/flexcar_promotions.git',
+  branch: 'main'
+```
 
 ### Features
 - **Multiple Item Types**: Products sold by quantity or weight
+- **Inventory Management**: Real-time stock tracking with validation
 - **4 Promotion Types**:
   - Flat discount (e.g., $20 off)
   - Percentage discount (e.g., 10% off)
@@ -110,6 +220,8 @@ This demo integrates the Flexcar Promotions engine located in `../flexcar_promot
 - **Smart Pricing**: Automatically calculates best available price
 - **Time-based Promotions**: Start and end times for campaigns
 - **Category & Brand Support**: Organize products and apply group promotions
+- **Promo Codes**: Apply promotional discounts via codes
+- **Stock Validation**: Prevents overselling with real-time stock checks
 
 ### Quick Engine Demo
 
@@ -131,16 +243,31 @@ For detailed engine documentation, see:
 ## Key Files & Directories
 
 ```
-app/
-  controllers/    # Application controllers
-  models/         # Application models (extends engine models)
-  views/          # Application views
-config/
-  routes.rb       # Application routes
-  database.yml    # Database configuration
-db/
-  migrate/        # Database migrations (includes engine migrations)
-  schema.rb       # Current database schema
+flexcar_demo_project/
+├── app/
+│   ├── controllers/
+│   │   └── api/v1/          # API controllers (carts, items, inventory, promotions)
+│   └── models/              # Application models (extends engine models)
+├── frontend/                # Next.js 15 + React 19 frontend
+│   ├── app/                 # Next.js app directory
+│   │   ├── page.tsx        # Items list page
+│   │   ├── cart/           # Cart page
+│   │   └── inventory/      # Inventory management page
+│   ├── components/          # React components
+│   │   ├── CartView.tsx    # Cart display
+│   │   ├── PromoCodeInput.tsx
+│   │   └── Toast.tsx       # Notifications
+│   ├── lib/
+│   │   └── api.ts          # API client
+│   └── types/              # TypeScript definitions
+├── config/
+│   ├── routes.rb           # API routes
+│   └── database.yml        # Database configuration
+├── db/
+│   ├── migrate/            # Database migrations
+│   └── seeds.rb            # Sample data
+├── start.sh                # Quick start script
+└── Gemfile                 # Ruby dependencies
 ```
 
 ## Configuration

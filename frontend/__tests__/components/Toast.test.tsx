@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import Toast from '@/components/Toast';
 
 describe('Toast', () => {
@@ -31,7 +31,9 @@ describe('Toast', () => {
   it('auto-closes after duration', () => {
     render(<Toast message="Auto close" type="success" onClose={mockOnClose} duration={3000} />);
 
-    jest.advanceTimersByTime(3000);
+    act(() => {
+      jest.advanceTimersByTime(3000);
+    });
 
     expect(mockOnClose).toHaveBeenCalled();
   });

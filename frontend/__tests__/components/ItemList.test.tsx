@@ -10,8 +10,13 @@ describe('ItemList', () => {
       description: 'High-performance laptop',
       price: 999.99,
       category: 'Electronics',
+      brand: 'TechBrand',
       sale_unit: 'quantity',
       category_id: 1,
+      stock_quantity: 10,
+      in_stock: true,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z',
     },
     {
       id: 2,
@@ -19,8 +24,13 @@ describe('ItemList', () => {
       description: 'Fresh cheese',
       price: 5.99,
       category: 'Food',
+      brand: 'DairyBrand',
       sale_unit: 'weight',
       category_id: 2,
+      stock_quantity: 1000,
+      in_stock: true,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z',
     },
   ];
 

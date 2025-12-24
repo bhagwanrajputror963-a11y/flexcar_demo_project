@@ -91,30 +91,6 @@ describe('CartView', () => {
     expect(mockOnClearCart).toHaveBeenCalled();
   });
 
-  it('displays subtotal and total correctly', () => {
-    render(<CartView cart={mockCart} onRemoveItem={mockOnRemoveItem} onClearCart={mockOnClearCart} />);
-    const subtotalLabels = screen.getAllByText(/subtotal:/i);
-    const totalLabels = screen.getAllByText(/total:/i);
-    expect(subtotalLabels.length).toBeGreaterThan(0);
-    expect(totalLabels.length).toBeGreaterThan(0);
-  });
-
-  it('shows savings when discount is applied', () => {
-    const cartWithDiscount = {
-      ...mockCart,
-      total_discount: 5.0,
-      total: 15.0,
-    };
-
-    render(<CartView cart={cartWithDiscount} onRemoveItem={mockOnRemoveItem} onClearCart={mockOnClearCart} />);
-    expect(screen.getByText(/savings:/i)).toBeInTheDocument();
-  });
-
-  it('displays proceed to checkout button when items exist', () => {
-    render(<CartView cart={mockCart} onRemoveItem={mockOnRemoveItem} onClearCart={mockOnClearCart} />);
-    expect(screen.getByText(/proceed to checkout/i)).toBeInTheDocument();
-  });
-
   it('handles weight-based items correctly', () => {
     const cartWithWeightItem: Cart = {
       ...mockCart,

@@ -46,7 +46,7 @@ RSpec.describe Api::V1::CartsController, type: :controller do
 
   describe 'POST #add_item' do
     let(:cart) { create(:cart) }
-    let(:item) { create(:item, price: 15.0) }
+    let(:item) { create(:item, price: 15.0, stock_quantity: 100) }
 
     it 'adds item with quantity to cart' do
       post :add_item, params: { id: cart.id, item_id: item.id, quantity: 3 }
@@ -57,7 +57,7 @@ RSpec.describe Api::V1::CartsController, type: :controller do
     end
 
     it 'adds item with weight to cart' do
-      weight_item = create(:item, :sold_by_weight, price: 5.0)
+      weight_item = create(:item, :sold_by_weight, price: 5.0, stock_quantity: 1000)
       post :add_item, params: { id: cart.id, item_id: weight_item.id, weight: 250 }
       expect(response).to be_successful
       json = JSON.parse(response.body)

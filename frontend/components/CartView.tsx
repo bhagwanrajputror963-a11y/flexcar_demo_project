@@ -207,31 +207,6 @@ export default function CartView({ cart, onRemoveItem, onClearCart, onUpdateItem
                 </div>
               ))}
             </div>
-
-            {/* Cart Summary */}
-            <div className="border-t border-gray-200 pt-3 space-y-1.5">
-              <div className="flex justify-between text-sm text-gray-600">
-                <span>Subtotal:</span>
-                <span>${cart.subtotal.toFixed(2)}</span>
-              </div>
-
-              {cart.total_discount > 0 && (
-                <div className="flex justify-between text-sm text-green-600 font-medium">
-                  <span>Savings:</span>
-                  <span>-${cart.total_discount.toFixed(2)}</span>
-                </div>
-              )}
-
-              <div className="flex justify-between text-base font-bold text-gray-900 pt-2 border-t border-gray-200">
-                <span>Total:</span>
-                <span className="text-indigo-600">${cart.total.toFixed(2)}</span>
-              </div>
-            </div>
-
-            {/* Checkout Button */}
-            <button className="w-full mt-4 bg-indigo-600 text-white py-2.5 px-4 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-              Proceed to Checkout
-            </button>
           </>
         )}
       </div>

@@ -17,10 +17,16 @@ describe('Component Integration Tests', () => {
       {
         id: 1,
         name: 'Laptop',
+        description: 'Test laptop',
         price: 1000,
         category: 'Electronics',
+        brand: 'TechBrand',
         sale_unit: 'quantity',
         category_id: 1,
+        stock_quantity: 10,
+        in_stock: true,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z',
       },
     ];
 
@@ -112,18 +118,30 @@ describe('Component Integration Tests', () => {
         {
           id: 1,
           name: 'Laptop',
+          description: 'Test laptop',
           price: 1000,
           category: 'Electronics',
+          brand: 'TechBrand',
           sale_unit: 'quantity',
           category_id: 1,
+          stock_quantity: 10,
+          in_stock: true,
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z',
         },
         {
           id: 2,
           name: 'Mouse',
+          description: 'Test mouse',
           price: 25,
           category: 'Accessories',
+          brand: 'TechBrand',
           sale_unit: 'quantity',
           category_id: 2,
+          stock_quantity: 50,
+          in_stock: true,
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z',
         },
       ];
 
@@ -197,9 +215,9 @@ describe('Component Integration Tests', () => {
       expect(screen.getByText('Laptop')).toBeInTheDocument();
       expect(screen.getByText('Mouse')).toBeInTheDocument();
 
-      // Check for total - looking for multiple elements with "Total:"
-      const totalLabels = screen.getAllByText(/total:/i);
-      expect(totalLabels.length).toBeGreaterThan(0);
+      // Check that both items show their totals
+      const totalPrices = screen.getAllByText(/\$1800\.00|\$25\.00/);
+      expect(totalPrices.length).toBeGreaterThan(0);
     });
 
     it('handles item removal from cart', () => {

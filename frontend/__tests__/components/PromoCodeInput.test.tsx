@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import PromoCodeInput from '@/components/PromoCodeInput';
 
 // Mock fetch
@@ -95,7 +95,9 @@ describe('PromoCodeInput', () => {
       expect(screen.getByText(/promo applied/i)).toBeInTheDocument();
     });
 
-    jest.advanceTimersByTime(5000);
+    act(() => {
+      jest.advanceTimersByTime(5000);
+    });
 
     await waitFor(() => {
       expect(screen.queryByText(/promo applied/i)).not.toBeInTheDocument();
