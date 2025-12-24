@@ -1,6 +1,6 @@
-'use client';
-
+"use client";
 import { useEffect, useState } from 'react';
+// ...existing code...
 import { itemsAPI, promotionsAPI, cartsAPI } from '@/lib/api';
 import { Item, Promotion, Cart } from '@/types';
 import ItemList from '@/components/ItemList';
@@ -11,64 +11,76 @@ import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 import PromoCodeInput from '@/components/PromoCodeInput';
 import Toast from '@/components/Toast';
 
-export default function Home() {
-  const [items, setItems] = useState<Item[]>([]);
-  const [promotions, setPromotions] = useState<Promotion[]>([]);
-  const [cart, setCart] = useState<Cart | null>(null);
-  const [cartId, setCartId] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
+  export default function Home() {
+    const [items, setItems] = useState<Item[]>([]);
+    const [promotions, setPromotions] = useState<Promotion[]>([]);
+    const [cart, setCart] = useState<Cart | null>(null);
+    const [cartId, setCartId] = useState<number | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-    initializeApp();
-  }, []);
+    useEffect(() => {
+      setMounted(true);
+      initializeApp();
+    }, []);
 
-  useEffect(() => {
-    if (cartId && mounted) {
-      localStorage.setItem('cartId', cartId.toString());
-      fetchCart();
-    }
-  }, [cartId, mounted]);
+    useEffect(() => {
+      if (cartId && mounted) {
+        localStorage.setItem('cartId', cartId.toString());
+        fetchCart();
+      }
+    }, [cartId, mounted]);
 
-  const initializeApp = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+    const initializeApp = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-      // Load items and promotions
-      const [itemsData, promotionsData] = await Promise.all([
-        itemsAPI.getAll(),
-        promotionsAPI.getAll(),
-      ]);
+        // Load items and promotions
+        const [itemsData, promotionsData] = await Promise.all([
+          itemsAPI.getAll(),
+          promotionsAPI.getAll(),
+        ]);
 
-      setItems(itemsData);
-      setPromotions(promotionsData);
+        setItems(itemsData);
+        setPromotions(promotionsData);
 
-      // Check for existing cart or create new one (only on client)
-      if (typeof window !== 'undefined') {
-        const savedCartId = localStorage.getItem('cartId');
-        if (savedCartId) {
-          try {
-            const cartData = await cartsAPI.get(parseInt(savedCartId));
-            setCart(cartData);
-            setCartId(parseInt(savedCartId));
-          } catch {
-            // Cart doesn't exist, create new one
+        // Check for existing cart or create new one (only on client)
+        if (typeof window !== 'undefined') {
+          const savedCartId = localStorage.getItem('cartId');
+          if (savedCartId) {
+            try {
+              const cartData = await cartsAPI.get(parseInt(savedCartId));
+              setCart(cartData);
+              setCartId(parseInt(savedCartId));
+            } catch {
+              // Cart doesn't exist, create new one
+              await createNewCart();
+            }
+          } else {
             await createNewCart();
           }
-        } else {
-          await createNewCart();
         }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load data');
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load data');
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+
+    const fetchCart = async () => {
+      if (!cartId) return;
+      try {
+        const cartData = await cartsAPI.get(cartId);
+        setCart(cartData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch cart');
+      }
+    };
+
 
   const createNewCart = async () => {
     try {
@@ -79,20 +91,8 @@ export default function Home() {
     }
   };
 
-  const fetchCart = async () => {
-    if (!cartId) return;
-
-    try {
-      const cartData = await cartsAPI.get(cartId);
-      setCart(cartData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch cart');
-    }
-  };
-
   const handleAddToCart = async (item: Item, quantity: number, weight?: number) => {
     if (!cartId) return;
-
     try {
       setError(null);
       const { cart: updatedCart, message } = await cartsAPI.addItem(
@@ -160,10 +160,10 @@ export default function Home() {
                 Smart promotions automatically applied to your cart
               </p>
             </div>
-            <div className="flex items-center space-x-2 text-indigo-600">
+            <a href="/cart" className="flex items-center space-x-2 text-indigo-600 hover:text-indigo-800 transition-colors">
               <ShoppingCartIcon className="h-8 w-8" />
               <span className="text-2xl font-bold">{cart?.items.length || 0}</span>
-            </div>
+            </a>
           </div>
         </div>
       </header>
@@ -184,25 +184,8 @@ export default function Home() {
 
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column: Items */}
-          <div className="lg:col-span-2">
-            <ItemList items={items} onAddToCart={handleAddToCart} />
-          </div>
-
-          {/* Right Column: Promo Code + Cart */}
-          <div>
-            <PromoCodeInput cartId={cartId} onPromoApplied={fetchCart} />
-            <div className="mt-4">
-              <CartView
-                cart={cart}
-                onRemoveItem={handleRemoveFromCart}
-                onClearCart={handleClearCart}
-              />
-            </div>
-          </div>
-        </div>
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <ItemList items={items} onAddToCart={handleAddToCart} />
       </main>
     </div>
   );
