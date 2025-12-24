@@ -20,6 +20,11 @@ logitech = FlexcarPromotions::Brand.create!(name: 'Logitech')
 corsair = FlexcarPromotions::Brand.create!(name: 'Corsair')
 starbucks = FlexcarPromotions::Brand.create!(name: 'Starbucks')
 dell = FlexcarPromotions::Brand.create!(name: 'Dell')
+hp = FlexcarPromotions::Brand.create!(name: 'HP')
+lenovo = FlexcarPromotions::Brand.create!(name: 'Lenovo')
+razer = FlexcarPromotions::Brand.create!(name: 'Razer')
+samsung = FlexcarPromotions::Brand.create!(name: 'Samsung')
+sony = FlexcarPromotions::Brand.create!(name: 'Sony')
 
 # Create Categories
 puts "Creating categories..."
@@ -75,6 +80,121 @@ coffee = FlexcarPromotions::Item.create!(
 premium_coffee = FlexcarPromotions::Item.create!(
   name: 'Premium Espresso Beans',
   price: 0.08,
+  sale_unit: 'weight',
+  brand: starbucks,
+  category: food
+)
+
+# Additional Electronics
+FlexcarPromotions::Item.create!(
+  name: 'HP Pavilion 15',
+  price: 899.99,
+  sale_unit: 'quantity',
+  brand: hp,
+  category: electronics
+)
+
+FlexcarPromotions::Item.create!(
+  name: 'Lenovo ThinkPad X1',
+  price: 1299.99,
+  sale_unit: 'quantity',
+  brand: lenovo,
+  category: electronics
+)
+
+FlexcarPromotions::Item.create!(
+  name: 'Samsung Galaxy Book',
+  price: 799.99,
+  sale_unit: 'quantity',
+  brand: samsung,
+  category: electronics
+)
+
+FlexcarPromotions::Item.create!(
+  name: 'iPad Pro 12.9"',
+  price: 1099.00,
+  sale_unit: 'quantity',
+  brand: apple,
+  category: electronics
+)
+
+# Additional Accessories
+FlexcarPromotions::Item.create!(
+  name: 'Razer DeathAdder Mouse',
+  price: 69.99,
+  sale_unit: 'quantity',
+  brand: razer,
+  category: accessories
+)
+
+FlexcarPromotions::Item.create!(
+  name: 'Logitech C920 Webcam',
+  price: 79.99,
+  sale_unit: 'quantity',
+  brand: logitech,
+  category: accessories
+)
+
+FlexcarPromotions::Item.create!(
+  name: 'Sony WH-1000XM4 Headphones',
+  price: 349.99,
+  sale_unit: 'quantity',
+  brand: sony,
+  category: accessories
+)
+
+FlexcarPromotions::Item.create!(
+  name: 'Apple Magic Keyboard',
+  price: 129.00,
+  sale_unit: 'quantity',
+  brand: apple,
+  category: accessories
+)
+
+FlexcarPromotions::Item.create!(
+  name: 'Razer Kraken Headset',
+  price: 79.99,
+  sale_unit: 'quantity',
+  brand: razer,
+  category: accessories
+)
+
+FlexcarPromotions::Item.create!(
+  name: 'Logitech G Pro Keyboard',
+  price: 149.99,
+  sale_unit: 'quantity',
+  brand: logitech,
+  category: accessories
+)
+
+FlexcarPromotions::Item.create!(
+  name: 'Samsung 27" Monitor',
+  price: 299.99,
+  sale_unit: 'quantity',
+  brand: samsung,
+  category: electronics
+)
+
+FlexcarPromotions::Item.create!(
+  name: 'Dell UltraSharp Monitor',
+  price: 449.99,
+  sale_unit: 'quantity',
+  brand: dell,
+  category: electronics
+)
+
+# Additional Food Items
+FlexcarPromotions::Item.create!(
+  name: 'Organic Green Tea',
+  price: 0.04,
+  sale_unit: 'weight',
+  brand: starbucks,
+  category: food
+)
+
+FlexcarPromotions::Item.create!(
+  name: 'Dark Roast Coffee',
+  price: 0.06,
   sale_unit: 'weight',
   brand: starbucks,
   category: food

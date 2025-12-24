@@ -52,53 +52,23 @@ export default function PromotionsList({ promotions }: PromotionsListProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <div className="flex items-center space-x-2">
+    <div className="bg-white border-l-4 border-indigo-500 rounded-lg px-4 py-3 shadow-sm">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-2">
           <TagIcon className="h-5 w-5 text-indigo-600" />
-          <h2 className="text-xl font-semibold text-gray-900">Active Promotions</h2>
+          <span className="font-semibold text-sm text-gray-900">
+            Active Promotions ({activePromotions.length})
+          </span>
         </div>
-        <p className="mt-1 text-sm text-gray-600">
-          Automatically applied to eligible items
-        </p>
-      </div>
-
-      <div className="px-6 py-4">
-        {activePromotions.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-gray-500">No active promotions</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
+        {activePromotions.length > 0 && (
+          <div className="flex flex-wrap gap-2 text-sm">
             {activePromotions.map((promotion) => (
-              <div
+              <span
                 key={promotion.id}
-                className="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors"
+                className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full font-medium"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPromotionBadgeColor(
-                          promotion.promotion_type
-                        )}`}
-                      >
-                        {formatPromotionType(promotion.promotion_type)}
-                      </span>
-                    </div>
-                    <h3 className="font-medium text-gray-900">{promotion.name}</h3>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {getPromotionDescription(promotion)}
-                    </p>
-                    
-                    {promotion.end_time && (
-                      <p className="text-xs text-gray-500 mt-2">
-                        Ends: {new Date(promotion.end_time).toLocaleDateString()}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
+                {promotion.name}
+              </span>
             ))}
           </div>
         )}

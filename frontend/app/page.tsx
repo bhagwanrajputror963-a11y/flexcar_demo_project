@@ -190,6 +190,11 @@ export default function Home() {
         </div>
       )}
 
+      {/* Active Promotions Banner */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <PromotionsList promotions={promotions} />
+      </div>
+
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -198,14 +203,13 @@ export default function Home() {
             <ItemList items={items} onAddToCart={handleAddToCart} />
           </div>
 
-          {/* Right Column: Cart and Promotions */}
-          <div className="space-y-8">
+          {/* Right Column: Cart */}
+          <div>
             <CartView
               cart={cart}
               onRemoveItem={handleRemoveFromCart}
               onClearCart={handleClearCart}
             />
-            <PromotionsList promotions={promotions} />
           </div>
         </div>
       </main>
