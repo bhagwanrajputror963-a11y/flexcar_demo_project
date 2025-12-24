@@ -22,7 +22,7 @@ module Api
           item: serialize_item(@item)
         }
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Item not found' }, status: :not_found
+        render json: { error: "Item not found" }, status: :not_found
       end
 
       private

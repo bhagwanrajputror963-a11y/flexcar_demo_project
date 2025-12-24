@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { cartsAPI } from '@/lib/api';
 import { Cart } from '@/types';
 import CartView from '@/components/CartView';
@@ -43,8 +44,8 @@ export default function CartPage() {
       setSuccessMessage(message);
       setErrorMessage(null);
       setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (error: any) {
-      const errorMsg = error?.response?.data?.error || 'Failed to update item';
+    } catch (error: unknown) {
+      const errorMsg = error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'error' in error.response.data ? String(error.response.data.error) : 'Failed to update item';
       setErrorMessage(errorMsg);
       setSuccessMessage(null);
       setTimeout(() => setErrorMessage(null), 5000);
@@ -66,7 +67,7 @@ export default function CartPage() {
       <div className="max-w-5xl mx-auto px-4 py-8">
         <header className="mb-8 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">Your Cart</h1>
-          <a href="/" className="text-indigo-600 hover:text-indigo-800 font-medium text-sm px-4 py-2 rounded transition-colors bg-indigo-50 border border-indigo-100">← Back to Items List</a>
+          <Link href="/" className="text-indigo-600 hover:text-indigo-800 font-medium text-sm px-4 py-2 rounded transition-colors bg-indigo-50 border border-indigo-100">← Back to Items List</Link>
         </header>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left: Items List */}

@@ -22,7 +22,7 @@ module Api
           promotion: serialize_promotion(@promotion)
         }
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Promotion not found' }, status: :not_found
+        render json: { error: "Promotion not found" }, status: :not_found
       end
 
       private

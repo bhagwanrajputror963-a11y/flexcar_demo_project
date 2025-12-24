@@ -1,14 +1,13 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
 // ...existing code...
 import { itemsAPI, promotionsAPI, cartsAPI } from '@/lib/api';
 import { Item, Promotion, Cart } from '@/types';
 import ItemList from '@/components/ItemList';
-import CartView from '@/components/CartView';
 import PromotionsList from '@/components/PromotionsList';
 import ErrorAlert from '@/components/ErrorAlert';
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
-import PromoCodeInput from '@/components/PromoCodeInput';
 import Toast from '@/components/Toast';
 
   export default function Home() {
@@ -22,19 +21,16 @@ import Toast from '@/components/Toast';
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-      setMounted(true);
-      initializeApp();
-    }, []);
+  const createNewCart = useCallback(async () => {
+    try {
+      const { cart_id } = await cartsAPI.create();
+      setCartId(cart_id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create cart');
+    }
+  }, []);
 
-    useEffect(() => {
-      if (cartId && mounted) {
-        localStorage.setItem('cartId', cartId.toString());
-        fetchCart();
-      }
-    }, [cartId, mounted]);
-
-    const initializeApp = async () => {
+    const initializeApp = useCallback(async () => {
       try {
         setLoading(true);
         setError(null);
@@ -69,10 +65,9 @@ import Toast from '@/components/Toast';
       } finally {
         setLoading(false);
       }
-    };
+    }, [createNewCart]);
 
-
-    const fetchCart = async () => {
+    const fetchCart = useCallback(async () => {
       if (!cartId) return;
       try {
         const cartData = await cartsAPI.get(cartId);
@@ -80,17 +75,19 @@ import Toast from '@/components/Toast';
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch cart');
       }
-    };
+    }, [cartId]);
 
+    useEffect(() => {
+      setMounted(true);
+      initializeApp();
+    }, [initializeApp]);
 
-  const createNewCart = async () => {
-    try {
-      const { cart_id } = await cartsAPI.create();
-      setCartId(cart_id);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create cart');
-    }
-  };
+    useEffect(() => {
+      if (cartId && mounted) {
+        localStorage.setItem('cartId', cartId.toString());
+        fetchCart();
+      }
+    }, [cartId, mounted, fetchCart]);
 
   const handleAddToCart = async (item: Item, quantity: number, weight?: number) => {
     if (!cartId) return;
@@ -106,39 +103,11 @@ import Toast from '@/components/Toast';
       setSuccessMessage(message);
       setErrorMessage(null);
       setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.error || err.message || 'Failed to add item to cart';
+    } catch (err: unknown) {
+      const errorMsg = err && typeof err === 'object' && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response && err.response.data && typeof err.response.data === 'object' && 'error' in err.response.data ? String(err.response.data.error) : (err instanceof Error ? err.message : 'Failed to add item to cart');
       setErrorMessage(errorMsg);
       setSuccessMessage(null);
       setTimeout(() => setErrorMessage(null), 5000);
-    }
-  };
-
-  const handleRemoveFromCart = async (itemId: number) => {
-    if (!cartId) return;
-
-    try {
-      setError(null);
-      const { cart: updatedCart, message } = await cartsAPI.removeItem(cartId, itemId);
-      setCart(updatedCart);
-      setSuccessMessage(message);
-      setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.error || err.message || 'Failed to remove item from cart');
-    }
-  };
-
-  const handleClearCart = async () => {
-    if (!cartId) return;
-
-    try {
-      setError(null);
-      const { cart: updatedCart, message } = await cartsAPI.clear(cartId);
-      setCart(updatedCart);
-      setSuccessMessage(message);
-      setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.error || err.message || 'Failed to clear cart');
     }
   };
 
@@ -166,19 +135,19 @@ import Toast from '@/components/Toast';
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <a
+              <Link
                 href="/inventory"
                 className="text-sm font-medium text-gray-700 hover:text-indigo-600 px-4 py-2 rounded-md border border-gray-300 hover:border-indigo-300 bg-white transition-colors"
               >
                 📦 Manage Inventory
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/cart"
                 className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
               >
                 <ShoppingCartIcon className="h-5 w-5" />
                 <span>View Cart {cart && cart.items.length > 0 && `(${cart.items.length})`}</span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

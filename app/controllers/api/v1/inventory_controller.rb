@@ -4,7 +4,7 @@ module Api
   module V1
     class InventoryController < ApplicationController
       skip_before_action :verify_authenticity_token
-      before_action :set_item, except: [:index]
+      before_action :set_item, except: [ :index ]
 
       # GET /api/v1/inventory
       def index
@@ -27,10 +27,10 @@ module Api
         if @item.update(item_params)
           render json: {
             item: serialize_item(@item),
-            message: 'Inventory updated successfully'
+            message: "Inventory updated successfully"
           }
         else
-          render json: { error: @item.errors.full_messages.join(', ') }, status: :unprocessable_entity
+          render json: { error: @item.errors.full_messages.join(", ") }, status: :unprocessable_entity
         end
       rescue StandardError => e
         render json: { error: e.message }, status: :unprocessable_entity
@@ -39,10 +39,16 @@ module Api
       # PATCH /api/v1/inventory/:id/adjust_stock
       def adjust_stock
         adjustment = params[:adjustment].to_i
+
+        if adjustment == 0 && params[:adjustment].present?
+          render json: { error: "Adjustment cannot be zero" }, status: :unprocessable_entity
+          return
+        end
+
         new_stock = (@item.stock_quantity || 0) + adjustment
 
         if new_stock < 0
-          render json: { error: 'Stock cannot be negative' }, status: :unprocessable_entity
+          render json: { error: "Stock cannot be negative. Current stock: #{@item.stock_quantity || 0}" }, status: :unprocessable_entity
           return
         end
 
@@ -52,7 +58,7 @@ module Api
             message: "Stock adjusted by #{adjustment}"
           }
         else
-          render json: { error: @item.errors.full_messages.join(', ') }, status: :unprocessable_entity
+          render json: { error: @item.errors.full_messages.join(", ") }, status: :unprocessable_entity
         end
       rescue StandardError => e
         render json: { error: e.message }, status: :unprocessable_entity
@@ -63,7 +69,7 @@ module Api
       def set_item
         @item = FlexcarPromotions::Item.find(params[:id])
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Item not found' }, status: :not_found
+        render json: { error: "Item not found" }, status: :not_found
       end
 
       def item_params

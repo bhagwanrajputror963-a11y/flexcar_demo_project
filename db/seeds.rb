@@ -304,4 +304,3 @@ puts "  - Logitech MX Master 3 ($99.99) - Buy 2 Get 1 Free"
 puts "  - Corsair K95 RGB ($199.99) - 10% category discount"
 puts "  - Coffee Beans ($0.05/g) - 50% off when buying 200g+"
 puts "  - Premium Coffee ($0.08/g) - 30% off when buying 150g+"
-

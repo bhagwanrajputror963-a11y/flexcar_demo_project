@@ -44,7 +44,7 @@ export default function PromoCodeInput({ cartId, onPromoApplied }: PromoCodeInpu
       } else {
         setMessage({ type: 'error', text: data.error })
       }
-    } catch (error) {
+    } catch (_error) {
       setMessage({ type: 'error', text: 'Failed to apply promo code' })
     } finally {
       setLoading(false)

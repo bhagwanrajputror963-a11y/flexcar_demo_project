@@ -43,7 +43,7 @@ gem "image_processing", "~> 1.2"
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS)
 gem "rack-cors"
 
-gem 'flexcar_promotions', path: '../flexcar_promotions'
+gem "flexcar_promotions", path: "../flexcar_promotions"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

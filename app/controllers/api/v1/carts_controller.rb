@@ -4,7 +4,7 @@ module Api
   module V1
     class CartsController < ApplicationController
       skip_before_action :verify_authenticity_token
-      before_action :set_cart, except: [:create]
+      before_action :set_cart, except: [ :create ]
 
       # POST /api/v1/carts
       def create
@@ -12,7 +12,7 @@ module Api
 
         render json: {
           cart_id: @cart.id,
-          message: 'Cart created successfully'
+          message: "Cart created successfully"
         }, status: :created
       rescue StandardError => e
         render json: { error: e.message }, status: :unprocessable_entity
@@ -36,6 +36,13 @@ module Api
         # Check stock availability
         if item.sold_by_quantity?
           requested_qty = params[:quantity].to_i
+
+          # Validate quantity is positive
+          if requested_qty <= 0
+            render json: { error: "Quantity must be greater than 0" }, status: :unprocessable_entity
+            return
+          end
+
           available_stock = item.stock_quantity || 0
 
           if available_stock == 0
@@ -56,6 +63,13 @@ module Api
           @cart.add_item(item, quantity: requested_qty)
         else
           requested_weight = params[:weight].to_f
+
+          # Validate weight is positive
+          if requested_weight <= 0
+            render json: { error: "Weight must be greater than 0" }, status: :unprocessable_entity
+            return
+          end
+
           available_stock = item.stock_quantity || 0
 
           if available_stock == 0
@@ -83,7 +97,7 @@ module Api
           message: "#{item.name} added to cart"
         }
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Item not found' }, status: :not_found
+        render json: { error: "Item not found" }, status: :not_found
       rescue StandardError => e
         render json: { error: e.message }, status: :unprocessable_entity
       end
@@ -94,13 +108,20 @@ module Api
         cart_item = @cart.cart_items.find_by(item: item)
 
         unless cart_item
-          render json: { error: 'Item not in cart' }, status: :not_found
+          render json: { error: "Item not in cart" }, status: :not_found
           return
         end
 
         # Check stock availability
         if item.sold_by_quantity?
           requested_qty = params[:quantity].to_i
+
+          # Validate quantity is positive
+          if requested_qty <= 0
+            render json: { error: "Quantity must be greater than 0" }, status: :unprocessable_entity
+            return
+          end
+
           available_stock = item.stock_quantity || 0
 
           if available_stock == 0
@@ -116,6 +137,13 @@ module Api
           cart_item.update!(quantity: requested_qty, weight: nil)
         else
           requested_weight = params[:weight].to_f
+
+          # Validate weight is positive
+          if requested_weight <= 0
+            render json: { error: "Weight must be greater than 0" }, status: :unprocessable_entity
+            return
+          end
+
           available_stock = item.stock_quantity || 0
 
           if available_stock == 0
@@ -138,7 +166,7 @@ module Api
           message: "#{item.name} quantity updated"
         }
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Item not found' }, status: :not_found
+        render json: { error: "Item not found" }, status: :not_found
       rescue StandardError => e
         render json: { error: e.message }, status: :unprocessable_entity
       end
@@ -155,7 +183,7 @@ module Api
           message: "#{item.name} removed from cart"
         }
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Item not found' }, status: :not_found
+        render json: { error: "Item not found" }, status: :not_found
       rescue StandardError => e
         render json: { error: e.message }, status: :unprocessable_entity
       end
@@ -166,7 +194,7 @@ module Api
 
         render json: {
           cart: serialize_cart(@cart, @cart.calculate_total),
-          message: 'Cart cleared successfully'
+          message: "Cart cleared successfully"
         }
       rescue StandardError => e
         render json: { error: e.message }, status: :unprocessable_entity
@@ -174,13 +202,20 @@ module Api
 
       # POST /api/v1/carts/:id/apply_promo
       def apply_promo
-        result = @cart.apply_promo_code(params[:promo_code])
+        promo_code = params[:promo_code]&.strip
+
+        if promo_code.blank?
+          render json: { error: "Promo code cannot be blank" }, status: :unprocessable_entity
+          return
+        end
+
+        result = @cart.apply_promo_code(promo_code)
 
         if result[:success]
           pricing = @cart.calculate_total
           render json: {
             cart: serialize_cart(@cart, pricing),
-            message: "Promo code '#{params[:promo_code]}' applied successfully"
+            message: "Promo code '#{promo_code}' applied successfully"
           }
         else
           render json: { error: result[:error] }, status: :unprocessable_entity
@@ -191,13 +226,20 @@ module Api
 
       # DELETE /api/v1/carts/:id/remove_promo
       def remove_promo
-        result = @cart.remove_promo_code(params[:promo_code])
+        promo_code = params[:promo_code]&.strip
+
+        if promo_code.blank?
+          render json: { error: "Promo code cannot be blank" }, status: :unprocessable_entity
+          return
+        end
+
+        result = @cart.remove_promo_code(promo_code)
 
         if result[:success]
           pricing = @cart.calculate_total
           render json: {
             cart: serialize_cart(@cart, pricing),
-            message: "Promo code '#{params[:promo_code]}' removed successfully"
+            message: "Promo code '#{promo_code}' removed successfully"
           }
         else
           render json: { error: result[:error] }, status: :unprocessable_entity
@@ -211,7 +253,7 @@ module Api
       def set_cart
         @cart = FlexcarPromotions::Cart.find(params[:id])
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Cart not found' }, status: :not_found
+        render json: { error: "Cart not found" }, status: :not_found
       end
 
       def serialize_cart(cart, pricing)

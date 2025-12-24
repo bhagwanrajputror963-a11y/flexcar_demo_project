@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { inventoryAPI } from '@/lib/api';
 import { Item } from '@/types';
 import Toast from '@/components/Toast';
@@ -22,7 +23,7 @@ export default function InventoryPage() {
       setLoading(true);
       const data = await inventoryAPI.getAll();
       setItems(data);
-    } catch (error) {
+    } catch (_error) {
       setErrorMessage('Failed to load inventory');
     } finally {
       setLoading(false);
@@ -35,8 +36,8 @@ export default function InventoryPage() {
       setItems(items.map(i => i.id === itemId ? item : i));
       setSuccessMessage(message);
       setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (error: any) {
-      setErrorMessage(error.response?.data?.error || 'Failed to adjust stock');
+    } catch (err: unknown) {
+      setErrorMessage(err && typeof err === 'object' && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response && err.response.data && typeof err.response.data === 'object' && 'error' in err.response.data ? String(err.response.data.error) : 'Failed to adjust stock');
       setTimeout(() => setErrorMessage(null), 3000);
     }
   };
@@ -60,8 +61,8 @@ export default function InventoryPage() {
       setSuccessMessage(message);
       setEditingItem(null);
       setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (error: any) {
-      setErrorMessage(error.response?.data?.error || 'Failed to update stock');
+    } catch (err: unknown) {
+      setErrorMessage(err && typeof err === 'object' && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response && err.response.data && typeof err.response.data === 'object' && 'error' in err.response.data ? String(err.response.data.error) : 'Failed to update stock');
       setTimeout(() => setErrorMessage(null), 3000);
     }
   };
@@ -94,12 +95,12 @@ export default function InventoryPage() {
             <h1 className="text-3xl font-bold text-gray-900">Inventory Management</h1>
             <p className="text-gray-600 mt-1">Manage stock levels for all items</p>
           </div>
-          <a
+          <Link
             href="/"
             className="text-indigo-600 hover:text-indigo-800 font-medium text-sm px-4 py-2 rounded transition-colors bg-indigo-50 border border-indigo-100"
           >
             ← Back to Items
-          </a>
+          </Link>
         </header>
 
         {/* Summary Cards */}

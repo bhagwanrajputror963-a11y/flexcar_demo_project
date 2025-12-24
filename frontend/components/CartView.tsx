@@ -40,7 +40,7 @@ export default function CartView({ cart, onRemoveItem, onClearCart, onUpdateItem
       } else {
         await onUpdateItem(itemId, Math.floor(newValue), undefined);
       }
-    } catch (error) {
+    } catch (_error) {
       // Error will be handled by parent component
     }
   };
@@ -66,7 +66,7 @@ export default function CartView({ cart, onRemoveItem, onClearCart, onUpdateItem
         await onUpdateItem(itemId, Math.floor(value), undefined);
       }
       setEditingItem(null);
-    } catch (error) {
+    } catch (_error) {
       // Error will be handled by parent component
       setEditingItem(null);
     }

@@ -24,9 +24,10 @@ if ! command -v ruby &> /dev/null; then
 fi
 
 # Check for nvm and set Node version
-if command -v nvm &> /dev/null; then
-    echo "Setting Node.js version to 22..."
-    nvm use 22 2>/dev/null || nvm install 22
+if [ -s "$HOME/.nvm/nvm.sh" ]; then
+    source "$HOME/.nvm/nvm.sh"
+    echo "Setting Node.js version to 20.19.6..."
+    nvm use 20.19.6 2>/dev/null || nvm install 20.19.6
 elif ! command -v node &> /dev/null; then
     echo -e "${RED}❌ Node.js is not installed${NC}"
     exit 1
@@ -52,6 +53,7 @@ fi
 # Check if database exists
 if ! rails db:version &> /dev/null; then
     echo "Creating database..."
+    rails db:drop
     rails db:create
     rails db:migrate
     echo "Seeding sample data..."
@@ -138,9 +140,9 @@ if [[ $start_servers =~ ^[Yy]$ ]]; then
     echo "Starting Next.js server on port 3001..."
     cd frontend
 
-    # Use Node 22 if nvm is available
-    if command -v nvm &> /dev/null; then
-        source ~/.nvm/nvm.sh && nvm use 22 && npm run dev &
+    # Use Node 20.19.6 if nvm is available
+    if [ -s "$HOME/.nvm/nvm.sh" ]; then
+        source "$HOME/.nvm/nvm.sh" && nvm use 20.19.6 && npm run dev &
     else
         npm run dev &
     fi
