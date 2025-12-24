@@ -70,7 +70,7 @@ module Api
 
       # DELETE /api/v1/carts/:id/clear
       def clear
-        @cart.cart_items.destroy_all
+        @cart.clear
 
         render json: {
           cart: serialize_cart(@cart, @cart.calculate_total),
